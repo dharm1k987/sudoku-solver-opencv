@@ -39,3 +39,27 @@ def find_contours(img, original):
         return [top_left, top_right, bot_left, bot_right]
 
     return []
+
+
+def warp_image(corners, original):
+    # we will be warping these points
+    corners = np.array(corners, dtype='float32')
+    top_left, top_right, bot_left, bot_right = corners
+
+    # find the best side width, since we will be warping into a square, height = length
+    width = int(max([
+        np.linalg.norm(top_right - bot_right),
+        np.linalg.norm(top_left - bot_left),
+        np.linalg.norm(bot_right - bot_left),
+        np.linalg.norm(top_left - top_right)
+    ]))
+
+    # create an array with shows top_left, top_right, bot_left, bot_right
+    mapping = np.array([[0, 0], [width - 1, 0], [0, width - 1], [width - 1, width - 1]], dtype='float32')
+    
+    print(corners)
+    print(mapping)
+
+    matrix = cv2.getPerspectiveTransform(corners, mapping)
+
+    return cv2.warpPerspective(original, matrix, (width, width))
