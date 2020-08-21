@@ -35,3 +35,7 @@ def find_contours(img, original):
 
         # draw corresponding circles
         [process_helpers.draw_extreme_corners(x, original) for x in [top_left, top_right, bot_left, bot_right]]
+
+        return [top_left, top_right, bot_left, bot_right]
+
+    return []

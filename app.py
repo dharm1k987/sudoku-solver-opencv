@@ -9,7 +9,7 @@ img = cv2.imread("imgs/sudoku.jpg")
 
 processed_img = preprocess.preprocess(img.copy())
 
-process.find_contours(processed_img, img)
+corners = process.find_contours(processed_img, img)
 
 cv2.imshow('window', display.stackImages(0.50, [img, processed_img]))
 
