@@ -56,9 +56,6 @@ def warp_image(corners, original):
 
     # create an array with shows top_left, top_right, bot_left, bot_right
     mapping = np.array([[0, 0], [width - 1, 0], [0, width - 1], [width - 1, width - 1]], dtype='float32')
-    
-    print(corners)
-    print(mapping)
 
     matrix = cv2.getPerspectiveTransform(corners, mapping)
 
