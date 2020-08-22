@@ -60,3 +60,21 @@ def warp_image(corners, original):
     matrix = cv2.getPerspectiveTransform(corners, mapping)
 
     return cv2.warpPerspective(original, matrix, (width, width))
+
+def split_into_squares(warped_img):
+    squares = [[0]*9 for i in range(9)]
+
+    width = warped_img.shape[0] // 9
+    print(warped_img.shape)
+
+    # find each square assuming they are of the same side
+    for j in range(9):
+        for i in range(9):
+            p1 = (i * width, j * width)  # Top left corner of a bounding box
+            p2 = ((i + 1) * width, (j + 1) * width)  # Bottom right corner of bounding box
+            square = warped_img[p1[1]:p2[1], p1[0]:p2[0]]
+            # print(warped_img[p1[1]:p2[1], p1[0]:p2[1]])
+            squares[j][i] = square
+
+
+    return squares
