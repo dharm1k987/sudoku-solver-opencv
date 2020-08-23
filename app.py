@@ -16,6 +16,7 @@ if corners:
     warped_processed = preprocess.preprocess(warped)
     squares = process.split_into_squares(warped_processed)
     squares_processed = process.clean_squares(squares)
+    squares_num_array = process.recognize_digits(squares_processed)
 
 
 

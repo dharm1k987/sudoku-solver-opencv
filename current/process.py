@@ -87,8 +87,18 @@ def clean_squares(squares):
             new_img, is_number = process_helpers.clean_helper(squares[j][i])
             if is_number:
                 squares[j][i] = new_img
-                cv2.imwrite('{}-{}.png'.format(j,i), squares[j][i])
+                # cv2.imwrite('{}-{}.png'.format(j,i), squares[j][i])
             else:
                 squares[j][i] = -1
 
     return squares
+
+
+def recognize_digits(squares_processed):
+    for j in range(9):
+        for i in range(9):
+            if type(squares_processed[j][i]) == int:
+                print('-1\t', end="")
+            else:
+                print('N\t', end="")
+        print("\n", end="")
