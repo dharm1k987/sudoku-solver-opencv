@@ -58,8 +58,9 @@ def warp_image(corners, original):
     mapping = np.array([[0, 0], [width - 1, 0], [0, width - 1], [width - 1, width - 1]], dtype='float32')
 
     matrix = cv2.getPerspectiveTransform(corners, mapping)
+    # cv2.warpPerspective(original, matrix, original.size, cv2.WARP_INVERSE_MAP, cv2.BORDER_TRANSPARENT)
 
-    return cv2.warpPerspective(original, matrix, (width, width))
+    return cv2.warpPerspective(original, matrix, (width, width)), matrix
 
 def split_into_squares(warped_img):
     squares = [[0]*9 for i in range(9)]
@@ -92,7 +93,7 @@ def clean_squares(squares):
                 # new_img = cv2.warpAffine(new_img, rot_mat, new_img.shape[1::-1], flags=cv2.INTER_LINEAR)
 
                 squares[j][i] = new_img
-                cv2.('{}-{}.png'.format(j,i), squares[j][i])
+                # cv2.imwrite('{}-{}.png'.format(j,i), squares[j][i])
             else:
                 squares[j][i] = -1
 
@@ -133,6 +134,8 @@ def recognize_digits(squares_processed, model):
 def draw_digits_on_warped(warped_img, solved_puzzle, squares_processed):
     width = warped_img.shape[0] // 9
 
+    img_w_text = np.zeros_like(warped_img)
+
     # find each square assuming they are of the same side
     for j in range(9):
         for i in range(9):
@@ -140,4 +143,24 @@ def draw_digits_on_warped(warped_img, solved_puzzle, squares_processed):
                 p1 = (i * width, j * width)  # Top left corner of a bounding box
                 p2 = ((i + 1) * width, (j + 1) * width)  # Bottom right corner of bounding box
                 ten_per = int((p2[0] - p1[0])//2 * 0.5)
+                # cv2.putText(img_w_text, str(solved_puzzle[j][i]), ( (p1[0] + p2[0])//2 - ten_per,(p1[1] + p2[1])//2 + ten_per),cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 2)
                 cv2.putText(warped_img, str(solved_puzzle[j][i]), ( (p1[0] + p2[0])//2 - ten_per,(p1[1] + p2[1])//2 + ten_per),cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 2)
+
+
+
+    return img_w_text
+
+
+def unwarp_image(img_src, img_dest, pts):
+    pts = np.array(pts)
+
+    # p.array([[0, 0], [width - 1, 0], [0, width - 1], [width - 1, width - 1]], dtype='float32')
+
+    height, width = img_src.shape[0], img_src.shape[1]
+    pts_source = np.array([[0, 0], [width - 1, 0], [0, width - 1], [width - 1, width - 1]],
+                          dtype='float32')
+    h, status = cv2.findHomography(pts_source, pts)
+    warped = cv2.warpPerspective(img_src, h, (img_dest.shape[1], img_dest.shape[0]))
+    cv2.fillConvexPoly(img_dest, np.ceil(pts).astype(int), 0, 16)
+    dst_img = img_dest + warped
+    return dst_img
