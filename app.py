@@ -1,12 +1,12 @@
 import cv2
 
-from current import process
+from current import process, sudoku
 from models import model_wrapper
 from preprocessing import preprocess
 
 my_model = model_wrapper.model_wrapper(None, False, "weights.h5", "temp2-model")
 # my_model.save('model_file')
-img = cv2.imread("imgs/ex2.jpg")
+img = cv2.imread("imgs/sudoku.jpg")
 
 processed_img = preprocess.preprocess(img.copy())
 
@@ -18,6 +18,7 @@ if corners:
     squares = process.split_into_squares(warped_processed)
     squares_processed = process.clean_squares(squares)
     squares_num_array = process.recognize_digits(squares_processed, my_model)
+    solved_puzzle = sudoku.solve(squares_num_array)
 
 
 

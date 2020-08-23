@@ -127,3 +127,5 @@ def recognize_digits(squares_processed, model):
         for i in range(9):
             print(squares_processed[j][i], end ="\t")
         print()
+
+    return squares_processed
