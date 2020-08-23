@@ -19,11 +19,11 @@ for file in os.listdir("./original"):
 
     # rotate left
     image_center = tuple(np.array(img.shape[1::-1]) / 2)
-    rot_mat = cv2.getRotationMatrix2D(image_center, 3, 1.0)
+    rot_mat = cv2.getRotationMatrix2D(image_center, 7, 1.0)
     rotate_left = cv2.warpAffine(img.copy(), rot_mat, img.shape[1::-1], flags=cv2.INTER_LINEAR)
 
     # rotate right
-    rot_mat = cv2.getRotationMatrix2D(image_center, -3, 1.0)
+    rot_mat = cv2.getRotationMatrix2D(image_center, -7, 1.0)
     rotate_right = cv2.warpAffine(img.copy(), rot_mat, img.shape[1::-1], flags=cv2.INTER_LINEAR)
 
     # dilate
@@ -52,7 +52,7 @@ for file in os.listdir("./original"):
         blur
     ]
 
-    starting = 106
+    starting = 218
 
     for f in to_write:
         cv2.imwrite('new/{}-{}.png'.format(img_num, img_num_second + starting), f)

@@ -6,7 +6,7 @@ from preprocessing import preprocess
 
 my_model = model_wrapper.model_wrapper(None, True, "weights.h5", "temp2-model")
 my_model.save('model_file')
-img = cv2.imread("imgs/unnamed.jpg")
+img = cv2.imread("imgs/sudoku.jpg")
 
 processed_img = preprocess.preprocess(img.copy())
 
