@@ -4,9 +4,9 @@ from current import process
 from models import model_wrapper
 from preprocessing import preprocess
 
-my_model = model_wrapper.model_wrapper(None, True, "weights.h5", "temp2-model")
-my_model.save('model_file')
-img = cv2.imread("imgs/sudoku.jpg")
+my_model = model_wrapper.model_wrapper(None, False, "weights.h5", "temp2-model")
+# my_model.save('model_file')
+img = cv2.imread("imgs/ex2.jpg")
 
 processed_img = preprocess.preprocess(img.copy())
 
