@@ -75,7 +75,20 @@ def split_into_squares(warped_img):
             square = warped_img[p1[1]:p2[1], p1[0]:p2[0]]
             # print(warped_img[p1[1]:p2[1], p1[0]:p2[1]])
             squares[j][i] = square
-            cv2.imwrite('{}-{}.png'.format(j,i), squares[j][i])
+            # cv2.imwrite('{}-{}.png'.format(j,i), squares[j][i])
 
+
+    return squares
+
+def clean_squares(squares):
+    for j in range(9):
+        for i in range(9):
+            # clean up the img at squares[j][i]
+            new_img, is_number = process_helpers.clean_helper(squares[j][i])
+            if is_number:
+                squares[j][i] = new_img
+                cv2.imwrite('{}-{}.png'.format(j,i), squares[j][i])
+            else:
+                squares[j][i] = -1
 
     return squares

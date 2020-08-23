@@ -15,6 +15,7 @@ if corners:
     warped = process.warp_image(corners, img)
     warped_processed = preprocess.preprocess(warped)
     squares = process.split_into_squares(warped_processed)
+    squares_processed = process.clean_squares(squares)
 
 
 
