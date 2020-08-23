@@ -92,7 +92,7 @@ def clean_squares(squares):
                 # new_img = cv2.warpAffine(new_img, rot_mat, new_img.shape[1::-1], flags=cv2.INTER_LINEAR)
 
                 squares[j][i] = new_img
-                cv2.imwrite('{}-{}.png'.format(j,i), squares[j][i])
+                cv2.('{}-{}.png'.format(j,i), squares[j][i])
             else:
                 squares[j][i] = -1
 
@@ -129,3 +129,15 @@ def recognize_digits(squares_processed, model):
         print()
 
     return squares_processed
+
+def draw_digits_on_warped(warped_img, solved_puzzle, squares_processed):
+    width = warped_img.shape[0] // 9
+
+    # find each square assuming they are of the same side
+    for j in range(9):
+        for i in range(9):
+            if type(squares_processed[j][i]) == int:
+                p1 = (i * width, j * width)  # Top left corner of a bounding box
+                p2 = ((i + 1) * width, (j + 1) * width)  # Bottom right corner of bounding box
+                ten_per = int((p2[0] - p1[0])//2 * 0.5)
+                cv2.putText(warped_img, str(solved_puzzle[j][i]), ( (p1[0] + p2[0])//2 - ten_per,(p1[1] + p2[1])//2 + ten_per),cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 2)
