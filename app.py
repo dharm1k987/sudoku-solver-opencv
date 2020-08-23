@@ -5,7 +5,7 @@ from current import process
 from helpers import display
 
 
-img = cv2.imread("imgs/sudoku.jpg")
+img = cv2.imread("imgs/unnamed.jpg")
 
 processed_img = preprocess.preprocess(img.copy())
 
@@ -19,7 +19,7 @@ if corners:
 
 
 # cv2.imshow('window', display.stackImages(0.50, [[img, processed_img],[warped, warped_processed]]))
-    cv2.imshow('window', squares[1][3])
+#     cv2.imshow('window', squares[1][3])
 
 
 cv2.waitKey(0)
