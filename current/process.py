@@ -86,6 +86,11 @@ def clean_squares(squares):
             # clean up the img at squares[j][i]
             new_img, is_number = process_helpers.clean_helper(squares[j][i])
             if is_number:
+
+                # image_center = tuple(np.array(new_img.shape[1::-1]) / 2)
+                # rot_mat = cv2.getRotationMatrix2D(image_center, -5, 1.0)
+                # new_img = cv2.warpAffine(new_img, rot_mat, new_img.shape[1::-1], flags=cv2.INTER_LINEAR)
+
                 squares[j][i] = new_img
                 cv2.imwrite('{}-{}.png'.format(j,i), squares[j][i])
             else:
@@ -94,11 +99,24 @@ def clean_squares(squares):
     return squares
 
 
-def recognize_digits(squares_processed):
+def recognize_digits(squares_processed, model):
     for j in range(9):
         for i in range(9):
             if type(squares_processed[j][i]) == int:
-                print('-1\t', end="")
+                pass
             else:
-                print('N\t', end="")
-        print("\n", end="")
+                img = squares_processed[j][i]
+                img = img.reshape(img.shape[0], img.shape[0])
+                img = cv2.resize(img, (28, 28))
+                squares_processed[j][i] = np.argmax(model.predict(img.reshape(1, 28, 28)))
+
+                # img = img.reshape(img.shape[0], img.shape[0])
+                # img = cv2.resize(img, (28, 28))
+                # cv2.imshow('w', img)
+                # print(np.argmax(    my_model.predict(img.reshape(1, 28, 28))    ) + 1)
+                #
+
+    for j in range(9):
+        for i in range(9):
+            print(squares_processed[j][i], end ="\t")
+        print()

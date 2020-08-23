@@ -7,7 +7,10 @@ import numpy as np
 from models import model
 
 
-def model_wrapper(wts_path, train=False, to_save_as=False):
+def model_wrapper(wts_path, train=False, to_save_as=False, model_path=None):
+    if model_path:
+        return tf.keras.models.load_model(model_path)
+
     my_model = model.get_model()
 
     if wts_path:
@@ -41,16 +44,17 @@ def model_wrapper(wts_path, train=False, to_save_as=False):
 
     return my_model
 
-# my_model = model_wrapper(None, True, "weights.h5")
+# my_model = model_wrapper(None, True, "weights.h5", "../model_file")
 #
 #
-# img = cv2.imread('../3-7.png')
+# img = cv2.imread('../7-5.png')
 #
 # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 # img = img.reshape(img.shape[0], img.shape[0])
 # img = cv2.resize(img, (28, 28))
 # cv2.imshow('w', img)
-# print(np.argmax(    my_model.predict(img.reshape(1, 28, 28))    ) + 1)
+# print(np.argmax(    my_model.predict(img.reshape(1, 28, 28))))
+# print(my_model.predict(img.reshape(1, 28, 28)))
 #
 #
 # cv2.waitKey(0)

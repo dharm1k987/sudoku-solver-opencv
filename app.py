@@ -1,11 +1,12 @@
 import cv2
-import numpy as np
-from preprocessing import preprocess
+
 from current import process
-from helpers import display
+from models import model_wrapper
+from preprocessing import preprocess
 
-
-img = cv2.imread("imgs/sudoku.jpg")
+my_model = model_wrapper.model_wrapper(None, True, "weights.h5", "model_file")
+my_model.save('model_file')
+img = cv2.imread("imgs/ex2.jpg")
 
 processed_img = preprocess.preprocess(img.copy())
 
@@ -16,7 +17,7 @@ if corners:
     warped_processed = preprocess.preprocess(warped)
     squares = process.split_into_squares(warped_processed)
     squares_processed = process.clean_squares(squares)
-    squares_num_array = process.recognize_digits(squares_processed)
+    squares_num_array = process.recognize_digits(squares_processed, my_model)
 
 
 
