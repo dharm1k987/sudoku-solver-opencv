@@ -107,10 +107,17 @@ def recognize_digits(squares_processed, model):
             else:
                 img = squares_processed[j][i]
                 img = img.reshape(img.shape[0], img.shape[0])
-                img = cv2.resize(img, (28, 28))
-                squares_processed[j][i] = np.argmax(model.predict(img.reshape(1, 28, 28)))
+                img = cv2.resize(img, (50, 50))
+                img = img.reshape(img.shape[0], img.shape[0], 1)
+                img = np.expand_dims(img, axis=0)
+                # print(img.shape)
+                squares_processed[j][i] = np.argmax(model.predict(np.vstack([img]))) + 1
 
-                # img = img.reshape(img.shape[0], img.shape[0])
+
+
+
+
+# img = img.reshape(img.shape[0], img.shape[0])
                 # img = cv2.resize(img, (28, 28))
                 # cv2.imshow('w', img)
                 # print(np.argmax(    my_model.predict(img.reshape(1, 28, 28))    ) + 1)

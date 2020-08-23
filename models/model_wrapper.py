@@ -30,6 +30,7 @@ def model_wrapper(wts_path, train=False, to_save_as=False, model_path=None):
 
         (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
+
         # normalize the data
         x_train = x_train / 255.0
         x_test = x_test / 255.0
