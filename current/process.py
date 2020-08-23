@@ -87,7 +87,7 @@ def clean_squares(squares):
             new_img, is_number = process_helpers.clean_helper(squares[j][i])
             if is_number:
                 squares[j][i] = new_img
-                # cv2.imwrite('{}-{}.png'.format(j,i), squares[j][i])
+                cv2.imwrite('{}-{}.png'.format(j,i), squares[j][i])
             else:
                 squares[j][i] = -1
 

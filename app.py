@@ -5,7 +5,7 @@ from current import process
 from helpers import display
 
 
-img = cv2.imread("imgs/unnamed.jpg")
+img = cv2.imread("imgs/sudoku.jpg")
 
 processed_img = preprocess.preprocess(img.copy())
 
