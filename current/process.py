@@ -34,9 +34,9 @@ def find_contours(img, original):
         print(top_left)
 
         # draw corresponding circles
-        [process_helpers.draw_extreme_corners(x, original) for x in [top_left, top_right, bot_left, bot_right]]
+        [process_helpers.draw_extreme_corners(x, original) for x in [top_left, top_right, bot_right, bot_left]]
 
-        return [top_left, top_right, bot_left, bot_right]
+        return [top_left, top_right, bot_right, bot_left]
 
     return []
 
@@ -44,7 +44,7 @@ def find_contours(img, original):
 def warp_image(corners, original):
     # we will be warping these points
     corners = np.array(corners, dtype='float32')
-    top_left, top_right, bot_left, bot_right = corners
+    top_left, top_right, bot_right, bot_left = corners
 
     # find the best side width, since we will be warping into a square, height = length
     width = int(max([
@@ -55,7 +55,7 @@ def warp_image(corners, original):
     ]))
 
     # create an array with shows top_left, top_right, bot_left, bot_right
-    mapping = np.array([[0, 0], [width - 1, 0], [0, width - 1], [width - 1, width - 1]], dtype='float32')
+    mapping = np.array([[0, 0], [width - 1, 0], [width - 1, width - 1], [0, width - 1]], dtype='float32')
 
     matrix = cv2.getPerspectiveTransform(corners, mapping)
     # cv2.warpPerspective(original, matrix, original.size, cv2.WARP_INVERSE_MAP, cv2.BORDER_TRANSPARENT)
@@ -144,7 +144,7 @@ def draw_digits_on_warped(warped_img, solved_puzzle, squares_processed):
                 p2 = ((i + 1) * width, (j + 1) * width)  # Bottom right corner of bounding box
                 ten_per = int((p2[0] - p1[0])//2 * 0.5)
                 # cv2.putText(img_w_text, str(solved_puzzle[j][i]), ( (p1[0] + p2[0])//2 - ten_per,(p1[1] + p2[1])//2 + ten_per),cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 2)
-                cv2.putText(warped_img, str(solved_puzzle[j][i]), ( (p1[0] + p2[0])//2 - ten_per,(p1[1] + p2[1])//2 + ten_per),cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 2)
+                cv2.putText(warped_img, str(solved_puzzle[j][i]), ( (p1[0] + p2[0])//2 - ten_per,(p1[1] + p2[1])//2 + ten_per),cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 4)
 
 
 
@@ -153,14 +153,19 @@ def draw_digits_on_warped(warped_img, solved_puzzle, squares_processed):
 
 def unwarp_image(img_src, img_dest, pts):
     pts = np.array(pts)
+    print(pts)
 
     # p.array([[0, 0], [width - 1, 0], [0, width - 1], [width - 1, width - 1]], dtype='float32')
 
     height, width = img_src.shape[0], img_src.shape[1]
-    pts_source = np.array([[0, 0], [width - 1, 0], [0, width - 1], [width - 1, width - 1]],
+    pts_source = np.array([[0, 0], [width - 1, 0], [width - 1, height - 1], [0, width - 1]],
                           dtype='float32')
     h, status = cv2.findHomography(pts_source, pts)
     warped = cv2.warpPerspective(img_src, h, (img_dest.shape[1], img_dest.shape[0]))
-    cv2.fillConvexPoly(img_dest, np.ceil(pts).astype(int), 0, 16)
-    dst_img = img_dest + warped
+    # return warped
+    cv2.fillConvexPoly(img_dest, pts, 0, 16)
+
+
+    dst_img = cv2.add(img_dest , warped)
+
     return dst_img
