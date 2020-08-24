@@ -117,10 +117,13 @@ def draw_digits_on_warped(warped_img, solved_puzzle, squares_processed):
             if type(squares_processed[j][i]) == int:
                 p1 = (i * width, j * width)  # Top left corner of a bounding box
                 p2 = ((i + 1) * width, (j + 1) * width)  # Bottom right corner of bounding box
-                ten_per = int((p2[0] - p1[0]) // 2 * 0.5)
+
+                center = ((p1[0] + p2[0]) // 2, (p1[1] + p2[1]) // 2)
+                text_size, _ = cv2.getTextSize(str(solved_puzzle[j][i]), cv2.FONT_HERSHEY_SIMPLEX, 0.75, 4)
+                text_origin = (center[0] - text_size[0] // 2, center[1] + text_size[1] // 2)
+
                 cv2.putText(warped_img, str(solved_puzzle[j][i]),
-                            ((p1[0] + p2[0]) // 2 - ten_per, (p1[1] + p2[1]) // 2 + ten_per), cv2.FONT_HERSHEY_SIMPLEX,
-                            2, (0, 0, 255), 4)
+                            text_origin, cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 4)
 
     return img_w_text
 
