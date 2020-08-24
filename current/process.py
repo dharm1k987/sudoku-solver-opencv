@@ -151,7 +151,7 @@ def draw_digits_on_warped(warped_img, solved_puzzle, squares_processed):
     return img_w_text
 
 
-def unwarp_image(img_src, img_dest, pts):
+def unwarp_image(img_src, img_dest, pts, time):
     pts = np.array(pts)
     print(pts)
 
@@ -167,5 +167,7 @@ def unwarp_image(img_src, img_dest, pts):
 
 
     dst_img = cv2.add(img_dest , warped)
+
+    cv2.putText(dst_img, time, (40, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2)
 
     return dst_img

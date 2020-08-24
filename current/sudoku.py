@@ -1,3 +1,5 @@
+import time
+
 def find_empty_cell(grid):
     for row in range(0, 9):
         for col in range(0, 9):
@@ -74,9 +76,9 @@ def print_grid(grid):
 
 def solve(squares_num_array):
     print_grid(squares_num_array)
-
+    start = time.time()
     if DFS(squares_num_array):
-        return squares_num_array
+        return squares_num_array, "Solved in %.4fs" % (time.time() - start)
     else:
         print('No solution')
-        return None
+        return None, None

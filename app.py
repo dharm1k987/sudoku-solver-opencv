@@ -9,7 +9,7 @@ import copy
 
 my_model = model_wrapper.model_wrapper(None, False, "weights.h5", "temp2-model")
 # my_model.save('model_file')
-img = cv2.imread("imgs/sudoku.jpg")
+img = cv2.imread("imgs/5.jpg")
 img_result = img.copy()
 
 processed_img = preprocess.preprocess(img.copy())
@@ -24,17 +24,17 @@ if corners:
     squares_processed_before = copy.deepcopy(squares_processed)
 
     squares_num_array = process.recognize_digits(squares_processed, my_model)
-    solved_puzzle = sudoku.solve(squares_num_array)
+    solved_puzzle, time = sudoku.solve(squares_num_array)
     if solved_puzzle:
         process.draw_digits_on_warped(warped, solved_puzzle, squares_processed_before)
-        img_result = process.unwarp_image(warped, img_result, corners)
+        img_result = process.unwarp_image(warped, img_result, corners, time)
 
 
 
 
 
-cv2.imshow('window', display.stackImages(0.50, [img, warped, img_result]))
-#     cv2.imshow('window', squares[1][3])
+    cv2.imshow('window', display.stackImages(0.50, [img_result]))
+    #     cv2.imshow('window', squares[1][3])
 
 
 cv2.waitKey(0)

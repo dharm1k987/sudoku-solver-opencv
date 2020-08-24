@@ -15,7 +15,7 @@ def preprocess(img):
     invert = cv2.bitwise_not(thresh, thresh)
 
     # make the lines a little bigger so its easier to find contours
-    kernel = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], np.uint8)
-    result = cv2.dilate(invert, kernel)
+    # kernel = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], np.uint8)
+    # result = cv2.dilate(invert, kernel)
 
-    return result
+    return invert
