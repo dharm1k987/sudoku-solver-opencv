@@ -1,10 +1,11 @@
 import time
 
+
 def find_empty_cell(grid):
     for row in range(0, 9):
         for col in range(0, 9):
             if grid[row][col] == -1:
-                return (row, col)
+                return row, col
 
 
 def get_valid_choices(grid, row, col):
@@ -34,12 +35,14 @@ def valid_frame(grid, row, col, choice):
 
 
 def no_conflict(grid, row, col, pick):
-    if not valid_hv(grid, row, col, pick): return False
-    if not valid_frame(grid, row - row % 3, col - col % 3, pick): return False
+    if not valid_hv(grid, row, col, pick):
+        return False
+    if not valid_frame(grid, row - row % 3, col - col % 3, pick):
+        return False
     return True
 
 
-def DFS(grid):
+def dfs(grid):
     empty_cell = find_empty_cell(grid)
 
     if not empty_cell:
@@ -53,7 +56,7 @@ def DFS(grid):
         choice = stack.pop()
         grid[row][col] = choice
 
-        if (DFS(grid)):
+        if dfs(grid):
             return True
 
         grid[row][col] = -1
@@ -67,17 +70,18 @@ def print_grid(grid):
         print("|", end=" ")
         for j in range(9):
             print(grid[i][j], end=" ")
-            if (j % 3 == 2):
+            if j % 3 == 2:
                 print("|", end=" ")
         print()
-        if (i % 3 == 2):
+        if i % 3 == 2:
             print("-" * 25)
 
 
 def solve(squares_num_array):
     print_grid(squares_num_array)
     start = time.time()
-    if DFS(squares_num_array):
+    if dfs(squares_num_array):
+        print('Solved! Check the image')
         return squares_num_array, "Solved in %.4fs" % (time.time() - start)
     else:
         print('No solution')

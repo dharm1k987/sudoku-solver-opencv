@@ -6,10 +6,9 @@ from models import model_wrapper
 from preprocessing import preprocess
 import copy
 
-
 my_model = model_wrapper.model_wrapper(None, False, "weights.h5", "model-saved")
-# my_model.save('model_file')
-img = cv2.imread("imgs/5.jpg")
+
+img = cv2.imread("imgs/ex2.jpg")
 img_result = img.copy()
 
 processed_img = preprocess.preprocess(img.copy())
@@ -29,12 +28,7 @@ if corners:
         process.draw_digits_on_warped(warped, solved_puzzle, squares_processed_before)
         img_result = process.unwarp_image(warped, img_result, corners, time)
 
-
-
-
-
     cv2.imshow('window', display.stackImages(0.50, [img_result]))
     #     cv2.imshow('window', squares[1][3])
-
 
 cv2.waitKey(0)

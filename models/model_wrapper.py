@@ -1,8 +1,7 @@
+import time
+
 import tensorflow as tf
 from tensorflow.keras.callbacks import Callback
-import time
-import cv2
-import numpy as np
 
 from models import model
 
@@ -19,7 +18,6 @@ def model_wrapper(wts_path, train=False, to_save_as=False, model_path=None):
     if train:
         class myCallback(Callback):
             def on_epoch_end(self, epoch, logs={}):
-                return
                 if logs.get('accuracy') > 0.95 and logs.get('val_accuracy') > 0.95:
                     print('Stopping training')
                     my_model.stop_training = True
@@ -44,18 +42,3 @@ def model_wrapper(wts_path, train=False, to_save_as=False, model_path=None):
             my_model.save_weights(to_save_as)
 
     return my_model
-
-# my_model = model_wrapper(None, True, "weights.h5", "../model_file")
-#
-#
-# img = cv2.imread('../7-5.png')
-#
-# img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-# img = img.reshape(img.shape[0], img.shape[0])
-# img = cv2.resize(img, (28, 28))
-# cv2.imshow('w', img)
-# print(np.argmax(    my_model.predict(img.reshape(1, 28, 28))))
-# print(my_model.predict(img.reshape(1, 28, 28)))
-#
-#
-# cv2.waitKey(0)

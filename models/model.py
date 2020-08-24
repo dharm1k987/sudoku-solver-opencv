@@ -1,12 +1,9 @@
-import os
-import numpy as np
 import tensorflow as tf
-from sklearn.model_selection import train_test_split
 
 
 def get_model():
     model = tf.keras.Sequential([
-        tf.keras.layers.InputLayer(input_shape=(50,50,1)),
+        tf.keras.layers.InputLayer(input_shape=(50, 50, 1)),
         tf.keras.layers.Conv2D(64, (2, 2), activation="relu", padding="same"),
         tf.keras.layers.MaxPooling2D((2, 2)),
 

@@ -1,5 +1,4 @@
 import cv2
-import numpy as np
 
 
 def preprocess(img):
@@ -13,9 +12,5 @@ def preprocess(img):
 
     # invert it so the lines and numbers are white and area is black
     invert = cv2.bitwise_not(thresh, thresh)
-
-    # make the lines a little bigger so its easier to find contours
-    # kernel = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], np.uint8)
-    # result = cv2.dilate(invert, kernel)
 
     return invert
