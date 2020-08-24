@@ -7,7 +7,7 @@ from preprocessing import preprocess
 import copy
 
 
-my_model = model_wrapper.model_wrapper(None, False, "weights.h5", "temp2-model")
+my_model = model_wrapper.model_wrapper(None, False, "weights.h5", "model-saved")
 # my_model.save('model_file')
 img = cv2.imread("imgs/5.jpg")
 img_result = img.copy()
