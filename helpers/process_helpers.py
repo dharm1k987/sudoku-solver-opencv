@@ -15,10 +15,56 @@ def find_extreme_corners(polygon, limit_fn, compare_fn):
 
 
 def draw_extreme_corners(pts, original):
-    cv2.circle(original, pts, 10, (0, 255, 0), 10)
+    cv2.circle(original, pts, 7, (0, 255, 0), cv2.FILLED)
 
 
 def clean_helper(img):
+
+    # print(np.isclose(img, 0).sum())
+    if np.isclose(img, 0).sum() / (img.shape[0]*img.shape[1]) >= 0.95:
+        return np.zeros_like(img), False
+
+    # if there is very little white in the region around the center, this means we got an edge accidently
+    height, width = img.shape
+    mid = width//2
+    if np.isclose(img[:,int(mid-width*0.4):int(mid+width*0.4)], 0).sum() / (2*width*0.4*height) >= 0.90:
+        return np.zeros_like(img), False
+
+
+
+
+    # center image
+    contours, _ = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)
+    x, y, w, h = cv2.boundingRect(contours[0])
+
+
+    start_x = (width - w)//2
+    start_y = (height - h)//2
+    new_img = np.zeros_like(img)
+    new_img[start_y:start_y+h, start_x:start_x+w] = img[y:y+h,x:x+w]
+
+    # for j in range(y, y+h):
+    #     for i in range(x, x+w):
+    #         new_img[j][i] = img[j][i]
+
+
+
+
+    return new_img, True
+
+
+
+
+
+
+
+
+
+
+
+
+
     mid = img.shape[0] // 2
     ten_per = int(img.shape[0] * 0.1)
     twenty_per = int(img.shape[0] * 0.2)
