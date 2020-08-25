@@ -14,22 +14,30 @@ def find_contours(img, original):
 
     # make sure this is the one we are looking for
     for cnt in contours:
+        area = cv2.contourArea(cnt)
         perimeter = cv2.arcLength(cnt, closed=True)
         approx = cv2.approxPolyDP(cnt, 0.01 * perimeter, closed=True)
         num_corners = len(approx)
 
-        if num_corners == 4:
+        if num_corners == 4 and area > 1000:
             polygon = cnt
             break
 
-    if polygon is not None:
-        cv2.drawContours(original, [polygon], 0, (0, 0, 255), 3)
 
+
+    if polygon is not None:
         # find its extreme corners
         top_left = process_helpers.find_extreme_corners(polygon, min, np.add)  # has smallest (x + y) value
         top_right = process_helpers.find_extreme_corners(polygon, max, np.subtract)  # has largest (x - y) value
         bot_left = process_helpers.find_extreme_corners(polygon, min, np.subtract)  # has smallest (x - y) value
         bot_right = process_helpers.find_extreme_corners(polygon, max, np.add)  # has largest (x + y) value
+
+        # if its not a square, we don't want it
+        if not (0.95 < ((top_right[0] - top_left[0]) / (bot_right[1] - top_right[1])) < 1.05):
+            return []
+
+        print("Drawing")
+        cv2.drawContours(original, [polygon], 0, (0, 0, 255), 3)
 
         # draw corresponding circles
         [process_helpers.draw_extreme_corners(x, original) for x in [top_left, top_right, bot_right, bot_left]]
@@ -83,7 +91,7 @@ def clean_squares(squares):
             new_img, is_number = process_helpers.clean_helper(squares[j][i])
             if is_number:
                 squares[j][i] = new_img
-                # cv2.imwrite('{}-{}.png'.format(j,i), squares[j][i])
+                cv2.imwrite('{}-{}.png'.format(j,i), squares[j][i])
             else:
                 squares[j][i] = -1
 

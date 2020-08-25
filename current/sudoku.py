@@ -1,5 +1,5 @@
 import time
-
+import numpy as np
 
 def find_empty_cell(grid):
     for row in range(0, 9):
@@ -79,6 +79,9 @@ def print_grid(grid):
 
 def solve(squares_num_array):
     print_grid(squares_num_array)
+
+    if np.isclose(squares_num_array, -1).sum() == 81:
+        return None, None
     start = time.time()
     if dfs(squares_num_array):
         print('Solved! Check the image')
