@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 from helpers import process_helpers
-
+import time as t
 
 def create_grid_mask(vertical, horizontal):
     # combine the vertical and horizontal lines to make a grid
@@ -123,6 +123,35 @@ def clean_squares(squares):
 def recognize_digits(squares_processed, model):
     s = ""
     i = 0
+    formatted_squares = []
+    location_of_zeroes = []
+
+
+    # for square in squares_processed:
+    #     if type(square) == int:
+    #         location_of_zeroes.append(i)
+    #         i += 1
+    #     else:
+    #         img = square
+    #         img = img.reshape(img.shape[0], img.shape[0])
+    #         img = cv2.resize(img, (32, 32))
+    #         img = img.reshape(img.shape[0], img.shape[0], 1)
+    #         formatted_squares.append(img)
+    #
+    # all_preds = model.predict(formatted_squares)
+
+
+
+
+
+
+
+
+
+
+
+
+
     for square in squares_processed:
         if type(square) == int:
             s += "0"
@@ -137,7 +166,7 @@ def recognize_digits(squares_processed, model):
 
             img = img.reshape(img.shape[0], img.shape[0], 1)
             img = np.expand_dims(img, axis=0)
-            pred = np.argmax(model.predict(np.vstack([img]))) + 1
+            pred = np.argmax(model(img, training=False)) + 1
             s += str(pred)
 
     # sudoku.print_grid(squares_digits)
