@@ -27,7 +27,7 @@ from keras.utils.np_utils import to_categorical
 
 
 model = tf.keras.Sequential([
-    tf.keras.layers.InputLayer(input_shape=(50,50,1)),
+    tf.keras.layers.InputLayer(input_shape=(32,32,1)),
     tf.keras.layers.Conv2D(64, (2, 2), activation="relu", padding="same"),
     tf.keras.layers.MaxPooling2D((2, 2)),
 
@@ -55,7 +55,7 @@ for file in os.listdir('./original'):
 
     img = cv2.imread('{}/{}'.format('original', file))
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    img = cv2.resize(img, (50, 50))
+    img = cv2.resize(img, (32, 32))
     # print(img.shape)
     X.append(img)
     y.append(y_val)
@@ -76,5 +76,5 @@ y_test = to_categorical(y_test, 9)
 
 model.fit(x=X_train, y=y_train, batch_size=16, epochs=10, validation_data=(X_test, y_test))
 
-model.save('temp2-model-eating')
-model.save_weights('temp2-weights-eating.h5')
+model.save('temp2-model-eating-morning')
+model.save_weights('temp2-weights-eating-morning.h5')

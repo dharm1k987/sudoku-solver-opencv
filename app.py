@@ -10,7 +10,6 @@ from preprocessing import preprocess
 frameWidth = 960
 frameHeight = 720
 
-# change to 1 if using USB webcam
 cap = cv2.VideoCapture(0)
 frame_rate = 30
 
