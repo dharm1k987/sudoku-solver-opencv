@@ -1,50 +1,30 @@
 import cv2
 import numpy as np
-import operator
+
 from helpers import process_helpers
-from current import sudoku
+
 
 def create_grid_mask(vertical, horizontal):
+    # combine the vertical and horizontal lines to make a grid
     grid = cv2.add(horizontal, vertical)
+    # threshold and dilate the grid to cover more area
     grid = cv2.adaptiveThreshold(grid, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 235, 2)
     grid = cv2.dilate(grid, cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3)), iterations=2)
+
+    # find the list of where the lines are, this is an array of (rho, theta in radians)
     pts = cv2.HoughLines(grid, .3, np.pi / 90, 200)
 
-    def draw_lines(im, pts):
-        im = np.copy(im)
-        pts = np.squeeze(pts)
-        for r, theta in pts:
-            a = np.cos(theta)
-            b = np.sin(theta)
-            x0 = a * r
-            y0 = b * r
-            x1 = int(x0 + 1000 * (-b))
-            y1 = int(y0 + 1000 * a)
-            x2 = int(x0 - 1000 * (-b))
-            y2 = int(y0 - 1000 * a)
-            cv2.line(im, (x1, y1), (x2, y2), (255, 255, 255), 4)
-        return im
-
-    lines = draw_lines(grid, pts)
+    lines = process_helpers.draw_lines(grid, pts)
+    # extract the lines so only the numbers remain
     mask = cv2.bitwise_not(lines)
     return mask
 
+
 def get_grid_lines(img, length=10):
-    horizontal = np.copy(img)
-    cols = horizontal.shape[1]
-    horizontal_size = cols // length
-    horizontal_structure = cv2.getStructuringElement(cv2.MORPH_RECT, (horizontal_size, 1))
-    horizontal = cv2.erode(horizontal, horizontal_structure)
-    horizontal = cv2.dilate(horizontal, horizontal_structure)
-
-    vertical = np.copy(img)
-    rows = vertical.shape[0]
-    vertical_size = rows // length
-    vertical_structure = cv2.getStructuringElement(cv2.MORPH_RECT, (1, vertical_size))
-    vertical = cv2.erode(vertical, vertical_structure)
-    vertical = cv2.dilate(vertical, vertical_structure)
-
+    horizontal = process_helpers.grid_line_helper(img, 1, length)
+    vertical = process_helpers.grid_line_helper(img, 0, length)
     return vertical, horizontal
+
 
 def find_contours(img, original):
     # find contours on thresholded image
@@ -64,8 +44,6 @@ def find_contours(img, original):
         if num_corners == 4 and area > 1000:
             polygon = cnt
             break
-
-
 
     if polygon is not None:
         # find its extreme corners
@@ -119,8 +97,6 @@ def split_into_squares(warped_img):
         for i in range(9):
             p1 = (i * width, j * width)  # Top left corner of a bounding box
             p2 = ((i + 1) * width, (j + 1) * width)  # Bottom right corner of bounding box
-            # square = warped_img[p1[1]:p2[1], p1[0]:p2[0]]
-            # squares[j][i] = square
             squares.append(warped_img[p1[1]:p2[1], p1[0]:p2[0]])
 
     return squares
@@ -142,27 +118,14 @@ def clean_squares(squares):
             cleaned_squares.append(0)
 
     return cleaned_squares
-    # for j in range(9):
-    #     for i in range(9):
-    #         # clean up the img at squares[j][i]
-    #         new_img, is_number = process_helpers.clean_helper(squares[j][i])
-    #         if is_number:
-    #             squares[j][i] = new_img
-    #             cv2.imwrite('{}-{}.png'.format(j,i), squares[j][i])
-    #         else:
-    #             squares[j][i] = -1
-    #
-    # return squares
 
 
 def recognize_digits(squares_processed, model):
-    squares_digits = []
     s = ""
     i = 0
     for square in squares_processed:
         if type(square) == int:
             s += "0"
-            squares_digits.append(0)
         else:
 
             i += 1
@@ -175,36 +138,10 @@ def recognize_digits(squares_processed, model):
             img = img.reshape(img.shape[0], img.shape[0], 1)
             img = np.expand_dims(img, axis=0)
             pred = np.argmax(model.predict(np.vstack([img]))) + 1
-            squares_digits.append(pred)
             s += str(pred)
 
-
-            # resized = cv2.resize(square, (32, 32), interpolation=cv2.INTER_LANCZOS4)
-            # array = np.array([resized])
-            # reshaped = array.reshape(array.shape[0], 32, 32, 1)
-            # cv2.imwrite('{}.png'.format(i), resized)
-            #
-            # flt = reshaped.astype('float32')
-            # flt /= 255
-            # prediction = model.predict_classes(flt)
-            # squares_digits.append(prediction[0] + 1)  # OCR predicts from 0-8, changing it to 1-9
-
-    # for j in range(9):
-    #     for i in range(9):
-    #         if type(squares_processed[j][i]) == int:
-    #             pass
-    #         else:
-    #             img = squares_processed[j][i]
-    #             img = img.reshape(img.shape[0], img.shape[0])
-    #             img = cv2.resize(img, (32, 32))
-    #             img = img.reshape(img.shape[0], img.shape[0], 1)
-    #             img = np.expand_dims(img, axis=0)
-    #             squares_processed[j][i] = np.argmax(model.predict(np.vstack([img]))) + 1
-
-    # squares_digits = np.array(squares_digits).reshape((9, 9))
-
     # sudoku.print_grid(squares_digits)
-    return squares_digits, s
+    return s
 
 
 def draw_digits_on_warped(warped_img, solved_puzzle, squares_processed):
@@ -243,6 +180,7 @@ def unwarp_image(img_src, img_dest, pts, time):
 
     dst_img = cv2.add(img_dest, warped)
 
-    cv2.putText(dst_img, time, (40, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+    dst_img_height, dst_img_width = dst_img.shape[0], dst_img.shape[1]
+    cv2.putText(dst_img, time, (dst_img_width - 250, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 0, 0), 2)
 
     return dst_img

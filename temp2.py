@@ -60,7 +60,7 @@ for file in os.listdir('./original'):
     X.append(img)
     y.append(y_val)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=True)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, shuffle=True)
 X_train = np.array(X_train)
 X_test = np.array(X_test)
 y_train = np.array(y_train)
