@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-
+import tensorflow as tf
 from helpers import process_helpers
 import time as t
 
@@ -53,6 +53,8 @@ def find_contours(img, original):
         bot_right = process_helpers.find_extreme_corners(polygon, max, np.add)  # has largest (x + y) value
 
         # if its not a square, we don't want it
+        if bot_right[1] - top_right[1] == 0:
+            return []
         if not (0.95 < ((top_right[0] - top_left[0]) / (bot_right[1] - top_right[1])) < 1.05):
             return []
 
@@ -122,54 +124,57 @@ def clean_squares(squares):
 
 def recognize_digits(squares_processed, model):
     s = ""
-    i = 0
     formatted_squares = []
-    location_of_zeroes = []
+    location_of_zeroes = set()
+
+    # img =
+    blank_image = np.zeros_like(cv2.resize(squares_processed[0], (32, 32)))
+
+    for i in range(len(squares_processed)):
+        if type(squares_processed[i]) == int:
+            location_of_zeroes.add(i)
+            formatted_squares.append(blank_image)
+        else:
+            img = cv2.resize(squares_processed[i], (32, 32))
+            formatted_squares.append(img)
+
+    formatted_squares = np.array(formatted_squares)
+    all_preds = list(map(np.argmax, model(tf.convert_to_tensor(formatted_squares))))
+    for i in range(len(all_preds)):
+        if i in location_of_zeroes:
+            s += "0"
+        else:
+            s += str(all_preds[i] + 1)
+
+    # print(s)
+
+
+
+
+
+
+
+
+
 
 
     # for square in squares_processed:
     #     if type(square) == int:
-    #         location_of_zeroes.append(i)
-    #         i += 1
+    #         s += "0"
     #     else:
+    #
+    #         i += 1
+    #
     #         img = square
     #         img = img.reshape(img.shape[0], img.shape[0])
     #         img = cv2.resize(img, (32, 32))
-    #         img = img.reshape(img.shape[0], img.shape[0], 1)
-    #         formatted_squares.append(img)
+    #         # cv2.imwrite('{}.png'.format(i), img)
     #
-    # all_preds = model.predict(formatted_squares)
+    #         img = img.reshape(img.shape[0], img.shape[0], 1)
+    #         img = np.expand_dims(img, axis=0)
+    #         pred = np.argmax(model(img, training=False)) + 1
+    #         s += str(pred)
 
-
-
-
-
-
-
-
-
-
-
-
-
-    for square in squares_processed:
-        if type(square) == int:
-            s += "0"
-        else:
-
-            i += 1
-
-            img = square
-            img = img.reshape(img.shape[0], img.shape[0])
-            img = cv2.resize(img, (32, 32))
-            # cv2.imwrite('{}.png'.format(i), img)
-
-            img = img.reshape(img.shape[0], img.shape[0], 1)
-            img = np.expand_dims(img, axis=0)
-            pred = np.argmax(model(img, training=False)) + 1
-            s += str(pred)
-
-    # sudoku.print_grid(squares_digits)
     return s
 
 
@@ -210,6 +215,6 @@ def unwarp_image(img_src, img_dest, pts, time):
     dst_img = cv2.add(img_dest, warped)
 
     dst_img_height, dst_img_width = dst_img.shape[0], dst_img.shape[1]
-    cv2.putText(dst_img, time, (dst_img_width - 250, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 0, 0), 2)
+    # cv2.putText(dst_img, time, (dst_img_width - 250, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 0, 0), 2)
 
     return dst_img
