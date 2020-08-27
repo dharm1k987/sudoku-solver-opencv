@@ -28,24 +28,35 @@ from keras.utils.np_utils import to_categorical
 
 model = tf.keras.Sequential([
     tf.keras.layers.InputLayer(input_shape=(32,32,1)),
-    tf.keras.layers.Conv2D(64, (2, 2), activation="relu", padding="same"),
-    tf.keras.layers.MaxPooling2D((2, 2)),
+    tf.keras.layers.Conv2D(filters=32, kernel_size=(3,3), data_format="channels_last", activation="relu"),
+    tf.keras.layers.Conv2D(filters=64, kernel_size=(3,3), data_format="channels_last", activation="relu"),
 
-    tf.keras.layers.Conv2D(128, (2, 2), activation="relu", padding="same"),
-    tf.keras.layers.MaxPooling2D((2, 2)),
-
-    tf.keras.layers.Conv2D(256, (2, 2), activation="relu", padding="same"),
-    tf.keras.layers.MaxPooling2D((2, 2)),
+    # tf.keras.layers.Conv2D(64, (2, 2), activation="relu", padding="same"),
+    tf.keras.layers.MaxPooling2D(pool_size=(2,2), strides=(2,2), data_format="channels_last"),
+    #
+    # tf.keras.layers.Conv2D(128, (2, 2), activation="relu", padding="same"),
+    # tf.keras.layers.MaxPooling2D((2, 2)),
+    #
+    # tf.keras.layers.Conv2D(256, (2, 2), activation="relu", padding="same"),
+    # tf.keras.layers.MaxPooling2D((2, 2)),
+    tf.keras.layers.Dropout(0.25),
 
     tf.keras.layers.Flatten(),
-    tf.keras.layers.Dense(256, activation='relu'),
     tf.keras.layers.Dense(128, activation='relu'),
-    tf.keras.layers.Dense(64, activation='relu'),
-    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dropout(0.25),
+    #
+    # tf.keras.layers.Dense(128, activation='relu'),
+    # tf.keras.layers.Dense(64, activation='relu'),
+    # tf.keras.layers.Dropout(0.2),
     tf.keras.layers.Dense(9, activation="softmax")
 ])
 
 model.compile('adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+
+print(model.summary())
+
+# exit(0)
 
 X = []
 y = []
@@ -76,5 +87,5 @@ y_test = to_categorical(y_test, 9)
 
 model.fit(x=X_train, y=y_train, batch_size=16, epochs=10, validation_data=(X_test, y_test))
 
-model.save('model-mine')
-model.save_weights('weights-mine.h5')
+model.save('model-mine2')
+model.save_weights('weights-mine2.h5')

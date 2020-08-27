@@ -22,7 +22,7 @@ cap.set(4, frameHeight)
 # change brightness to 150
 cap.set(10, 150)
 
-my_model = model_wrapper.model_wrapper(None, False, "weights.h5", "model.hdf5")
+my_model = model_wrapper.model_wrapper(None, False, "weights.h5", "model-mine2")
 
 prev = 0
 
@@ -147,11 +147,11 @@ while True:
                 else:
                     seen[squares_guesses] = False
 
-        # cv2.imshow('window', display.stackImages(0.90, [img_corners, img_result]))
-        cv2.imshow('window', img_result)
+    # cv2.imshow('window', display.stackImages(0.90, [img_corners, img_result]))
+    cv2.imshow('window', img_result)
 
-    wait = cv2.waitKey(1)
-    if wait & 0xFF == ord('q'):
+    # wait =
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 cv2.destroyAllWindows()
