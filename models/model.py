@@ -3,7 +3,7 @@ import tensorflow as tf
 
 def get_model():
     model = tf.keras.Sequential([
-        tf.keras.layers.InputLayer(input_shape=(50, 50, 1)),
+        tf.keras.layers.InputLayer(input_shape=(32, 32, 1)),
         tf.keras.layers.Conv2D(64, (2, 2), activation="relu", padding="same"),
         tf.keras.layers.MaxPooling2D((2, 2)),
 
