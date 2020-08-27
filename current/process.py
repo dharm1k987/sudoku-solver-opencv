@@ -1,8 +1,9 @@
 import cv2
 import numpy as np
 import tensorflow as tf
+
 from helpers import process_helpers
-import time as t
+
 
 def create_grid_mask(vertical, horizontal):
     # combine the vertical and horizontal lines to make a grid
@@ -113,7 +114,6 @@ def clean_squares(squares):
 
         if is_number:
             cleaned_squares.append(new_img)
-            # cv2.imwrite('{}.png'.format(i), new_img)
             i += 1
 
         else:
@@ -145,35 +145,6 @@ def recognize_digits(squares_processed, model):
             s += "0"
         else:
             s += str(all_preds[i] + 1)
-
-    # print(s)
-
-
-
-
-
-
-
-
-
-
-
-    # for square in squares_processed:
-    #     if type(square) == int:
-    #         s += "0"
-    #     else:
-    #
-    #         i += 1
-    #
-    #         img = square
-    #         img = img.reshape(img.shape[0], img.shape[0])
-    #         img = cv2.resize(img, (32, 32))
-    #         # cv2.imwrite('{}.png'.format(i), img)
-    #
-    #         img = img.reshape(img.shape[0], img.shape[0], 1)
-    #         img = np.expand_dims(img, axis=0)
-    #         pred = np.argmax(model(img, training=False)) + 1
-    #         s += str(pred)
 
     return s
 
@@ -215,6 +186,6 @@ def unwarp_image(img_src, img_dest, pts, time):
     dst_img = cv2.add(img_dest, warped)
 
     dst_img_height, dst_img_width = dst_img.shape[0], dst_img.shape[1]
-    # cv2.putText(dst_img, time, (dst_img_width - 250, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 0, 0), 2)
+    cv2.putText(dst_img, time, (dst_img_width - 250, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 0, 0), 2)
 
     return dst_img
